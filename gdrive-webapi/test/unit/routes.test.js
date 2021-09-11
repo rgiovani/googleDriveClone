@@ -103,4 +103,21 @@ describe('#Routes test suite', () => {
 
     });
 
+    describe('#get', () => {
+        test.skip('given method GET it should list all files downloaded', async () => {
+            //- Para conseguir mockar, peguei as informações do meu arquivo na pasta downloads pelo terminal(downloads/) usando: 
+            //>node - depois - >fs.statSync('github-cover.png')  - retorna as informações do sistema operacional desse arquivo.
+            //-A ideia é, toda vez que alguem chamar, fs.stat, o teste não vai ter que olhar o sistema operacional e
+            //não vai depender da existencia do arquivo, ele retornará apenas o fileStatusMock.
+            const fileStatusMock = [{
+                size: 85675,
+                birthtime: "2021-09-11T05:53:55.349Z",
+                owner: 'SystemUser',
+                file: 'file.png'
+            }];
+        });
+
+
+    })
+
 });
