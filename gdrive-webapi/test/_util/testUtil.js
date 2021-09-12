@@ -30,6 +30,12 @@ export default class TestUil {
     }
 
     static generateTransformStream(onData) { //TransformStream: tambem é conhecido como Duplex stream(duas vias de entrada e saida)
+        // async function* namefunction(source) { //async iterator
+        //     for await (const chunk of data) {
+        //          yield chunk
+        //     }
+        // }
+
         return new Transform({
             objectMode: true,
             transform(chunk, enconding, callback) {

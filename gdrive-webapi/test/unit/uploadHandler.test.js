@@ -1,6 +1,7 @@
-import { describe, test, expect, jest } from '@jest/globals';
+import { describe, test, expect, jest, beforeEach } from '@jest/globals';
 import fs from 'fs';
-import { resolve } from 'path';
+import { pipeline } from 'stream/promises';
+import { logger } from '../../src/logger.js';
 
 import UploadHandler from '../../src/uploadHandler.js';
 import TestUil from '../_util/testUtil.js';
@@ -10,6 +11,12 @@ describe('#UploadHandler test suite', () => {
         to: (id) => ioObj,
         emit: (event, message) => { }
     }
+
+    beforeEach(() => { //mockando a função info do logger
+        jest.spyOn(logger, 'info')
+            .mockImplementation()
+    });
+
     describe('#registerEvents', () => {
         test('it should call onFile and onFinish functions on Busboy instance', () => {
             const uploadHandler = new UploadHandler({
@@ -75,5 +82,42 @@ describe('#UploadHandler test suite', () => {
             // const expectedFileName = resolve(handler.downloadsFolder, params.filename);
             // expect(fs.createWriteStream).toHaveBeenCalledWith(expectedFileName);
         });
-    })
+    });
+
+    describe('#handleFileBytes', () => {
+        test('should call emit function and it should be a transform stream', async () => {
+            jest.spyOn(ioObj, ioObj.to.name);
+            jest.spyOn(ioObj, ioObj.emit.name);
+
+            const handler = new UploadHandler({
+                io: ioObj,
+                sockedId: '01'
+            });
+
+            jest.spyOn(handler, handler.canExecute.name)
+                .mockReturnValue(true);
+
+            const messages = ['hello', 'world'];
+            const source = TestUil.generateReadableStream(messages);
+            const onWrite = jest.fn();
+            const target = TestUil.generateWritableStream(onWrite);
+
+            await pipeline(
+                source,
+                handler.handleFileBytes("filename.txt"),
+                target
+            );
+
+            expect(ioObj.to).toHaveBeenCalledTimes(messages.length);
+            expect(ioObj.emit).toHaveBeenCalledTimes(messages.length);
+
+            // se o handleFileBytes for um transform stream, nosso pipeline
+            // vai continuar o processo passando os dados para frente 
+            // e chamar nossa função no target a cada chunk.
+            expect(onWrite).toBeCalledTimes(messages.length);
+            expect(onWrite.mock.calls.join()).toEqual(messages.join());
+        })
+    });
+
+
 });

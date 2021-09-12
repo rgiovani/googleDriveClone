@@ -9,12 +9,38 @@ export default class UploadHandler {
         this.io = io;
         this.sockedId = sockedId;
         this.downloadsFolder = downloadsFolder;
+        this.ON_UPLOAD_EVENT = 'file-upload';
+    }
+
+    //[Padrão Backpressure] - Manipulador de pressão.
+    //Permite que a menssagem só seja enviada para o cliente quando ela tiver permissão.
+    canExecute(lastExecution) {
+
     }
 
     //* Extrair o que é preciso saber de informação para que assim
     //o byte possa ser salvo em disco.
-    handleFileBytes() {
+    handleFileBytes(filename) {
+        this.lastMessageSent = Date.now();
 
+        async function* handlerData(source) {
+            let processedAlready = 0;
+
+            for await (const chunk of source) {
+                yield chunk; //yeld manda continuar o processo enquanto as proximas linhas trabalha em paralelo
+
+                processedAlready += chunk.length;
+                if (!this.canExecute(this.lastMessageSent)) {
+                    continue;
+                }
+
+                //notifica os clientes que o esse socket id evoluiu
+                this.io.to(this.sockedId).emit(this.ON_UPLOAD_EVENT, { processedAlready, filename });
+                logger.info(`File [${filename}] got ${processedAlready} bytes to ${this.sockedId}`);
+            }
+        }
+
+        return handlerData.bind(this);
     }
 
     async onFile(fieldname, file, filename) {
