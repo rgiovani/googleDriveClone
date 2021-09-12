@@ -119,5 +119,42 @@ describe('#UploadHandler test suite', () => {
         })
     });
 
+    describe('#canExecute', () => {
+        test('should return true when time is later then specified delay', () => {
+            const timerDelay = 1000;
+            const uploadHandler = new UploadHandler({
+                io: {},
+                socket: '',
+                messageTimeDelayMs: timerDelay
+            });
+
+            const now = TestUil.getTimeFromDate('2021-12-01 05:00:03');
+            TestUil.mockDateNow([now]);
+
+            const lastExecution = TestUil.getTimeFromDate('2021-12-01 05:00:00');
+
+            const result = uploadHandler.canExecute(lastExecution)
+
+            expect(result).toBeTruthy();
+        });
+
+        test('should return false when time isnt later then specified delay', () => {
+            const timerDelay = 3000;
+            const uploadHandler = new UploadHandler({
+                io: {},
+                socket: '',
+                messageTimeDelayMs: timerDelay
+            });
+
+            const now = TestUil.getTimeFromDate('2021-12-01 05:00:01');
+            TestUil.mockDateNow([now]);
+
+            const lastExecution = TestUil.getTimeFromDate('2021-12-01 05:00:00');
+
+            const result = uploadHandler.canExecute(lastExecution)
+            expect(result).toBeFalsy();
+        });
+    });
+
 
 });

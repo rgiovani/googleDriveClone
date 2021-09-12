@@ -1,6 +1,18 @@
 import { Readable, Writable, Transform } from 'stream'
+import { jest } from '@jest/globals'
 
 export default class TestUil {
+
+    static mockDateNow(mockImplementationPeriods) {
+        const now = jest.spyOn(global.Date, global.Date.now.name);
+        mockImplementationPeriods.forEach(time => {
+            now.mockReturnValueOnce(time);
+        });
+    }
+
+    static getTimeFromDate(dateString) {
+        return new Date(dateString).getTime();
+    }
 
     //* Recebe um array de informações e envia esse array para os clientes.
     static generateReadableStream(data) {

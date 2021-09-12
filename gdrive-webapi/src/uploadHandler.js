@@ -5,17 +5,18 @@ import { logger } from './logger.js'
 import path from 'path';
 
 export default class UploadHandler {
-    constructor({ io, sockedId, downloadsFolder }) {
+    constructor({ io, sockedId, downloadsFolder, messageTimeDelayMs = 200 }) {
         this.io = io;
         this.sockedId = sockedId;
         this.downloadsFolder = downloadsFolder;
+        this.messageTimeDelayMs = messageTimeDelayMs;
         this.ON_UPLOAD_EVENT = 'file-upload';
     }
 
     //[Padrão Backpressure] - Manipulador de pressão.
     //Permite que a menssagem só seja enviada para o cliente quando ela tiver permissão.
     canExecute(lastExecution) {
-
+        return (Date.now() - lastExecution) > this.messageTimeDelayMs;
     }
 
     //* Extrair o que é preciso saber de informação para que assim
