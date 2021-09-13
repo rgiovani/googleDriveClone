@@ -11,7 +11,7 @@
     "test:cov": "set NODE_OPTIONS= --experimental-vm-modules && npx jest --no-cache --runInBand --coverage"
   },
   "keywords": [],
-  "author": "",
+  "author": "rgiovani",
   "license": "ISC",
   "devDependencies": {
     "cross-env": "^7.0.3",
@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "busboy": "^0.3.1",
+    "form-data": "4.0",
     "pino": "6.8",
     "pino-pretty": "5.1",
     "pretty-bytes": "5.6",

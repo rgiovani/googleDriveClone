@@ -18,7 +18,7 @@ export default class TestUil {
     static generateReadableStream(data) {
         return new Readable({ //Vai enviar eventos e quem tiver escutando irá receber esses eventos.
             objectMode: true,
-            async read() {
+            read() {
                 for (const item of data) {
                     //envia as informações do array(data) para quem estiver escutando.
                     this.push(item)

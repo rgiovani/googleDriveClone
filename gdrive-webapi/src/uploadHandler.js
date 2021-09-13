@@ -1,13 +1,13 @@
 import { pipeline } from 'stream/promises'; //apinova
 import fs from 'fs';
 import Busboy from 'busboy';
+
 import { logger } from './logger.js'
-import path from 'path';
 
 export default class UploadHandler {
-    constructor({ io, sockedId, downloadsFolder, messageTimeDelayMs = 200 }) {
+    constructor({ io, socketId, downloadsFolder, messageTimeDelayMs = 200 }) {
         this.io = io;
-        this.sockedId = sockedId;
+        this.socketId = socketId;
         this.downloadsFolder = downloadsFolder;
         this.messageTimeDelayMs = messageTimeDelayMs;
         this.ON_UPLOAD_EVENT = 'file-upload';
@@ -16,7 +16,7 @@ export default class UploadHandler {
     //[Padrão Backpressure] - Manipulador de pressão.
     //Permite que a menssagem só seja enviada para o cliente quando ela tiver permissão.
     canExecute(lastExecution) {
-        return (Date.now() - lastExecution) > this.messageTimeDelayMs;
+        return (Date.now() - lastExecution) >= this.messageTimeDelayMs;
     }
 
     //* Extrair o que é preciso saber de informação para que assim
@@ -24,7 +24,7 @@ export default class UploadHandler {
     handleFileBytes(filename) {
         this.lastMessageSent = Date.now();
 
-        async function* handlerData(source) {
+        async function* handleData(source) {
             let processedAlready = 0;
 
             for await (const chunk of source) {
@@ -35,13 +35,15 @@ export default class UploadHandler {
                     continue;
                 }
 
+                this.lastMessageSent = Date.now();
+
                 //notifica os clientes que o esse socket id evoluiu
                 this.io.to(this.sockedId).emit(this.ON_UPLOAD_EVENT, { processedAlready, filename });
                 logger.info(`File [${filename}] got ${processedAlready} bytes to ${this.sockedId}`);
             }
         }
 
-        return handlerData.bind(this);
+        return handleData.bind(this);
     }
 
     async onFile(fieldname, file, filename) {
