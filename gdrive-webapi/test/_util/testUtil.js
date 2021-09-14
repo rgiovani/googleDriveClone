@@ -1,7 +1,7 @@
 import { Readable, Writable, Transform } from 'stream'
 import { jest } from '@jest/globals'
 
-export default class TestUil {
+export default class TestUtil {
 
     static mockDateNow(mockImplementationPeriods) {
         const now = jest.spyOn(global.Date, global.Date.now.name);
