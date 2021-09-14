@@ -1,5 +1,6 @@
 import { dirname, resolve } from 'path';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, parse } from 'url';
+import { pipeline } from "stream/promises"
 
 import FileHelper from "./fileHelper.js";
 import { logger } from "./logger.js";
