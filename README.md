@@ -54,3 +54,7 @@ npm run dev
     - Você pode clicar em prosseguir no browser e usar o certificado invalido que o projeto vai continuar funcionando.
 - Rodei `npm test` mas nada acontece, o que fazer?
     - Verifique a versão do seu Node.js. Estamos usando na versão 16.8. Entre no [site do node.js](https://nodejs.org) e baixe a versão mais recente.
+
+
+### Repositório original usado durante o evento:
+https://github.com/ErickWendel/semana-javascript-expert05
