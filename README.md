@@ -8,6 +8,22 @@ Marque esse projeto com uma estrela 🌟
 
 ![](./resources/demo.gif)
 
+## Getting Started
+
+1º In **gdrive-webapi/** run:
+
+```bash
+npm run prod
+```
+
+2º In **gdrive-webapp/** run:
+
+```bash
+npm run dev
+```
+
+- Drag and drop a file on My Drive Screen, or use NEW Button to select a new file.
+
 ## Checklist Features
 
 - Web API
